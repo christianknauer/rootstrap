@@ -33,6 +33,8 @@ systemctl restart ssh
 ufw enable 
 ufw allow ssh
 
+cd ; rm -rf rootstrap 
+
 shutdown -r now
 
 # EOF
