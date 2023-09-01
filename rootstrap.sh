@@ -22,8 +22,7 @@ ADMIN_NAME=${ADMIN_NAME:-Administrator}
 
 echo "Creating admin user $ADMIN_NAME ($ADMIN_USERNAME)"
 
-echo "Enter password for admin user:"
-adduser ${ADMIN_USERNAME} --comment "$ADMIN_USERNAME"
+adduser ${ADMIN_USERNAME} --gecos "$ADMIN_USERNAME"
 usermod -aG sudo ${ADMIN_USERNAME}
 echo "${ADMIN_USERNAME} ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/${ADMIN_USERNAME}
 
