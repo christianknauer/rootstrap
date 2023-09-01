@@ -17,12 +17,14 @@ apt install openssh-server ufw
 read -p "Enter admin username [administrator]: " ADMIN_USERNAME
 ADMIN_USERNAME=${ADMIN_USERNAME:-administrator}
 
-read -p "Enter admin full name [Administrator]: " ADMIN_NAME
-ADMIN_NAME=${ADMIN_NAME:-Administrator}
+# check if the admin user already exists
+if ! id -u "$ADMIN_USERNAME" >/dev/null 2>&1; then
+    read -p "Enter admin full name [Administrator]: " ADMIN_NAME
+    ADMIN_NAME=${ADMIN_NAME:-Administrator}
+    echo "Creating admin user $ADMIN_NAME ($ADMIN_USERNAME)"
+    adduser ${ADMIN_USERNAME} --gecos "$ADMIN_USERNAME"
+fi
 
-echo "Creating admin user $ADMIN_NAME ($ADMIN_USERNAME)"
-
-adduser ${ADMIN_USERNAME} --gecos "$ADMIN_USERNAME"
 usermod -aG sudo ${ADMIN_USERNAME}
 echo "${ADMIN_USERNAME} ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/${ADMIN_USERNAME}
 
