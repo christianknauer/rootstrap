@@ -29,7 +29,12 @@ usermod -aG sudo ${ADMIN_USERNAME}
 echo "${ADMIN_USERNAME} ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/${ADMIN_USERNAME}
 
 echo "AllowUsers ${ADMIN_USERNAME}" | tee -a /etc/ssh/sshd_config
+
+sed -i 's/^Include/#Include/g' /etc/ssh/sshd_config
+rm -f /etc/ssh/sshd_config.d/*.conf
 sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
+# temporary enable password authentication
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 
 systemctl restart ssh
 
