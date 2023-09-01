@@ -26,10 +26,11 @@ if ! id -u "$ADMIN_USERNAME" >/dev/null 2>&1; then
 fi
 
 usermod -aG sudo ${ADMIN_USERNAME}
-echo "${ADMIN_USERNAME} ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/${ADMIN_USERNAME}
+echo "${ADMIN_USERNAME} ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/${ADMIN_USERNAME}
 
 echo "AllowUsers ${ADMIN_USERNAME}" | tee -a /etc/ssh/sshd_config
-echo "PermitRootLogin no" | tee -a /etc/ssh/sshd_config
+sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
+
 systemctl restart ssh
 
 ufw enable 
