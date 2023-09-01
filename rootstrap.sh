@@ -2,19 +2,32 @@
 
 # root user bootstrap code for system setup
 
-ADMIN_USER_NAME=administrator
-
 [ "`id -u`" -ne 0 ] && echo "Must be run as root!" && exit 1
+
+echo "Upgrading system."
+echo "CAVE:"
+echo "- Select the option to overwrite sshd_config with the maintainer's version."
+
+sleep 3
 
 apt update 
 apt upgrade
 apt install openssh-server ufw
 
-adduser ${ADMIN_USER_NAME}
-usermod -aG sudo ${ADMIN_USER_NAME}
-echo "${ADMIN_USER_NAME} ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/${ADMIN_USER_NAME}
+read -p "Enter admin username [administrator]: " ADMIN_USERNAME
+ADMIN_USERNAME=${ADMIN_USERNAME:-administrator}
 
-echo "AllowUsers ${ADMIN_USER_NAME}" | tee -a /etc/ssh/sshd_config
+read -p "Enter admin full name [Administrator]: " ADMIN_NAME
+ADMIN_NAME=${ADMIN_NAME:-Administrator}
+
+echo "Creating admin user $ADMIN_NAME ($ADMIN_USERNAME)"
+
+echo "Enter password for admin user:"
+adduser ${ADMIN_USERNAME} --comment "$ADMIN_USERNAME"
+usermod -aG sudo ${ADMIN_USERNAME}
+echo "${ADMIN_USERNAME} ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/${ADMIN_USERNAME}
+
+echo "AllowUsers ${ADMIN_USERNAME}" | tee -a /etc/ssh/sshd_config
 echo "PermitRootLogin no" | tee -a /etc/ssh/sshd_config
 systemctl restart ssh
 
