@@ -28,8 +28,8 @@ fi
 usermod -aG sudo ${ADMIN_USERNAME}
 echo "${ADMIN_USERNAME} ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/${ADMIN_USERNAME}
 
-install -o ${ADMIN_USERNAME} -g ${ADMIN_USERNAME} -d /home/${ADMIN_USERNAME}
-install -o ${ADMIN_USERNAME} -g ${ADMIN_USERNAME} -t /home/${ADMIN_USERNAME}/.ssh ssh/authorized_keys
+install -o ${ADMIN_USERNAME} -g ${ADMIN_USERNAME} -d /home/${ADMIN_USERNAME}/.ssh
+install -o ${ADMIN_USERNAME} -g ${ADMIN_USERNAME} -t /home/${ADMIN_USERNAME}/.ssh rootstrap/ssh/authorized_keys
 chmod 700 /home/${ADMIN_USERNAME}/.ssh
 chmod 600 /home/${ADMIN_USERNAME}/.ssh/authorized_keys
 
