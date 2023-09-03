@@ -35,7 +35,9 @@ chmod 600 /home/${ADMIN_USERNAME}/.ssh/authorized_keys
 
 echo "AllowUsers ${ADMIN_USERNAME}" | tee -a /etc/ssh/sshd_config
 
+rm -rf /root/.ssh
 rm -f /etc/ssh/sshd_config.d/*.conf
+
 sed -i 's/^Include/#Include/g' /etc/ssh/sshd_config
 sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
