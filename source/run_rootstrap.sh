@@ -15,7 +15,15 @@ USAGE="\"$SCRIPT hostname\""
 
 Begin run_rootstrap
 
-if [ -z ${1+x} ]; then ErrorMsg "no target given, usage is $USAGE"; exit 1; fi;               TARGET_SPEC=$1
+if [ -z ${1+x} ]; then ErrorMsg "no target given, usage is $USAGE [admin password]"; exit 1; fi; TARGET_SPEC=$1
+
+ADMIN_PASSWORD=$(openssl rand 32 | base32)
+if [ -z ${2+x} ]; then 
+	InfoMsg "password for admin user not specified, generating random password"
+else
+	ADMIN_PASSWORD=$2
+fi
+InfoMsg "password for admin user: $ADMIN_PASSWORD"
 
 InfoMsg "run root bootstrap code on target $TARGET_SPEC"
 
@@ -27,6 +35,6 @@ if [ ! $? == 0 ]; then
 fi
 
 InfoMsg "run root bootstrap code on target"
-ssh -t root@$TARGET_SPEC ". rootstrap/rootstrap.sh"
+ssh -t root@$TARGET_SPEC ". rootstrap/rootstrap.sh $ADMIN_PASSWORD"
 
 # EOF

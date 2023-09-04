@@ -10,9 +10,11 @@ echo "- Select the option to overwrite sshd_config with the maintainer's version
 
 sleep 3
 
+echo "APT::Get::Always-Include-Phased-Updates True;" > /etc/apt/apt.conf.d/99-Phased-Updates
+
 apt update -y
 apt upgrade -y
-apt install -y openssh-server ufw
+apt install -y openssh-server ufw age 
 
 read -p "Enter admin username [administrator]: " ADMIN_USERNAME
 ADMIN_USERNAME=${ADMIN_USERNAME:-administrator}
@@ -22,8 +24,19 @@ if ! id -u "$ADMIN_USERNAME" >/dev/null 2>&1; then
     read -p "Enter admin full name [Administrator]: " ADMIN_NAME
     ADMIN_NAME=${ADMIN_NAME:-Administrator}
     echo "Creating admin user $ADMIN_NAME ($ADMIN_USERNAME)"
-    adduser ${ADMIN_USERNAME} --gecos "$ADMIN_USERNAME"
+    #adduser ${ADMIN_USERNAME} --gecos "$ADMIN_USERNAME"
+    adduser ${ADMIN_USERNAME} --gecos "$ADMIN_USERNAME" --disabled-password
 fi
+
+ADMIN_PASSWORD=$(openssl rand 32 | base32)
+if [ -z ${1+x} ]; then 
+	InfoMsg "password for admin user not specified, generating random password"
+else
+	ADMIN_PASSWORD=$1
+fi
+InfoMsg "password for admin user: $ADMIN_PASSWORD"
+
+echo "${ADMIN_USERNAME}:${ADMIN_PASSWORD}" | chpasswd
 
 usermod -aG sudo ${ADMIN_USERNAME}
 echo "${ADMIN_USERNAME} ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/${ADMIN_USERNAME}
