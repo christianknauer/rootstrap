@@ -10,8 +10,8 @@ echo "- Select the option to overwrite sshd_config with the maintainer's version
 
 sleep 3
 
-apt update 
-apt upgrade
+apt update -y
+apt upgrade -y
 apt install -y openssh-server ufw
 
 read -p "Enter admin username [administrator]: " ADMIN_USERNAME
