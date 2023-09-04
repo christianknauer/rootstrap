@@ -30,11 +30,11 @@ fi
 
 ADMIN_PASSWORD=$(openssl rand 32 | base32)
 if [ -z ${1+x} ]; then 
-	InfoMsg "password for admin user not specified, generating random password"
+	echo "password for admin user not specified, generating random password"
 else
 	ADMIN_PASSWORD=$1
 fi
-InfoMsg "password for admin user: $ADMIN_PASSWORD"
+echo "password for admin user: $ADMIN_PASSWORD"
 
 echo "${ADMIN_USERNAME}:${ADMIN_PASSWORD}" | chpasswd
 

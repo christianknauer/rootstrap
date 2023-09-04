@@ -5,7 +5,7 @@
 # debugging
 export CONFIG_STYLE_LOG="${CONFIG_STYLE_LOG:=color}"
 export CONFIG_LEVEL_DEBUG="${CONFIG_LEVEL_DEBUG:=0}"
-export CONFIG_LEVEL_SCOPE="${CONFIG_LEVEL_SCOPE:=config_ssh, config_authenticator}"
+export CONFIG_LEVEL_SCOPE="${CONFIG_LEVEL_SCOPE:=run_rootstrap}"
 
 # display global configuration
 DebugConfigGlobal () {
