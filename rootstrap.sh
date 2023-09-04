@@ -12,7 +12,7 @@ sleep 3
 
 apt update 
 apt upgrade
-apt install -y openssh-server ufw libpam-google-authenticator
+apt install -y openssh-server ufw
 
 read -p "Enter admin username [administrator]: " ADMIN_USERNAME
 ADMIN_USERNAME=${ADMIN_USERNAME:-administrator}
