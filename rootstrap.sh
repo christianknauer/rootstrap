@@ -12,7 +12,7 @@ sleep 3
 
 apt update 
 apt upgrade
-apt install openssh-server ufw
+apt install -y openssh-server ufw libpam-google-authenticator
 
 read -p "Enter admin username [administrator]: " ADMIN_USERNAME
 ADMIN_USERNAME=${ADMIN_USERNAME:-administrator}
@@ -41,8 +41,6 @@ rm -f /etc/ssh/sshd_config.d/*.conf
 sed -i 's/^Include/#Include/g' /etc/ssh/sshd_config
 sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
-# temporary enable password authentication
-#sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 
 systemctl restart sshd
 
