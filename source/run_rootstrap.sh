@@ -29,6 +29,8 @@ InfoMsg "run root bootstrap code on target $TARGET_SPEC"
 
 InfoMsg "cloning admin bootstrap code to target"
 
+ssh-keygen -f ~/.ssh/known_hosts -R $TARGET_SPEC
+
 ssh root@$TARGET_SPEC "rm -rf rootstrap; git clone https://github.com/christianknauer/rootstrap.git"
 if [ ! $? == 0 ]; then
     ErrorMsg "could not clone rootstrap code"; exit 1;
