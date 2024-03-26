@@ -18,7 +18,7 @@ apt update -y &> /dev/null
 apt upgrade -y &> /dev/null
 
 echo "Installing essential packages ..."
-apt install -y openssh-server git ufw curl
+apt install -y openssh-server git ufw curl gnupg rng-tools
 
 echo "Disable sudo password requirement for $USERNAME ..."
 usermod -aG sudo "$USERNAME"
