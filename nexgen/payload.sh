@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-sudo SSH_PUBLIC_KEY="${SSH_PUBLIC_KEY:-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH5ybW/0rquFoLSBtMrFytPH75MbTj0uS3WKD/I7OjHu admin (during setup only)}" USERNAME="$USER" bash <<"EOF"
+sudo SSH_PUBLIC_KEY="${1:-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH5ybW/0rquFoLSBtMrFytPH75MbTj0uS3WKD/I7OjHu admin (during setup only)}" USERNAME="$USER" bash <<"EOF"
 
 echo "APT::Get::Always-Include-Phased-Updates True;" > /etc/apt/apt.conf.d/99-Phased-Updates
 
