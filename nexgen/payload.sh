@@ -2,6 +2,15 @@
 
 sudo SSH_PUBLIC_KEY="${SSH_PUBLIC_KEY:-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH5ybW/0rquFoLSBtMrFytPH75MbTj0uS3WKD/I7OjHu admin (during setup only)}" USERNAME="$USER" bash <<"EOF"
 
+echo "Setting timezone & locale ..."
+# set timezone
+timedatectl set-timezone Europe/Berlin
+# set locale
+apt install language-pack-de
+localectl set-locale LC_MESSAGES=de_DE.utf8 LANG=de_DE.UTF-8
+update-locale
+
+echo "Disable phased updates ..."
 echo "APT::Get::Always-Include-Phased-Updates True;" > /etc/apt/apt.conf.d/99-Phased-Updates
 
 echo "Upgrading system ..."
@@ -9,11 +18,13 @@ apt update -y &> /dev/null
 apt upgrade -y &> /dev/null
 
 echo "Installing essential packages ..."
-apt install -y openssh-server git ufw
+apt install -y openssh-server git ufw curl
 
+echo "Disable sudo password requirement for $USERNAME ..."
 usermod -aG sudo "$USERNAME"
 echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/${USERNAME}
 
+echo "Configure ssh ..."
 install -o ${USERNAME} -g ${USERNAME} -d /home/$USERNAME/.ssh
 echo "$SSH_PUBLIC_KEY" | tee /home/$USERNAME/.ssh/authorized_keys
 chown ${USERNAME}:${USERNAME} /home/${USERNAME}/.ssh/authorized_keys
