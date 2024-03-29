@@ -18,7 +18,7 @@ apt update -y &> /dev/null
 apt upgrade -y &> /dev/null
 
 echo "Installing essential packages ..."
-apt install -y age at curl git gnupg openssh-server ufw rng-tools
+apt install -y age at curl git gnupg openssh-server shred ufw unzip rng-tools
 
 echo "Disable sudo password requirement for $USERNAME ..."
 usermod -aG sudo "$USERNAME"
@@ -53,3 +53,5 @@ echo "y" | ufw enable
 ufw allow ssh
 
 EOF
+
+rm -rf "$0"

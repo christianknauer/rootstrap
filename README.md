@@ -1,7 +1,7 @@
-# rootstrap (root user bootstrap code for system setup)
+# rootstrap (bootstrap code for system setup)
 
 Run the following commands as root:
 
 `git clone https://github.com/christianknauer/rootstrap.git`
 
-`. rootstrap/rootstrap.sh`
+`./rootstrap.sh host@domain.de`

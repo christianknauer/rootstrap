@@ -1,67 +1,34 @@
-# rootstrap.sh 
+#!/usr/bin/env bash
 
-# root user bootstrap code for system setup
+PAYLOAD="rootstrap_payload.sh"
+[ -f "$PAYLOAD" ] && echo "payload $PAYLOAD is missing" && exit 1
 
-[ "`id -u`" -ne 0 ] && echo "Must be run as root!" && exit 1
+TARGET="$1"
 
-echo "Upgrading system."
-echo "CAVE:"
-echo "- Select the option to overwrite sshd_config with the maintainer's version."
+ADMIN_USERNAME="$2"
+ADMIN_PASSWORD="$3"
 
-sleep 3
+[ -z "$TARGET" ] && echo "no target host specified" && exit 1
 
-echo "APT::Get::Always-Include-Phased-Updates True;" > /etc/apt/apt.conf.d/99-Phased-Updates
+TARGET="root@$TARGET" 
 
-apt update -y
-apt upgrade -y
-apt install -y openssh-server ufw age 
-
-read -p "Enter admin username [administrator]: " ADMIN_USERNAME
+if [ -z "$ADMIN_USERNAME" ]; then
+  read -r -p "Enter admin username [administrator]: " ADMIN_USERNAME
+  read -r -p "Enter admin full name [Administrator]: " ADMIN_NAME
+fi
 ADMIN_USERNAME=${ADMIN_USERNAME:-administrator}
+ADMIN_NAME=${ADMIN_NAME:-Administrator}
 
-# check if the admin user already exists
-if ! id -u "$ADMIN_USERNAME" >/dev/null 2>&1; then
-    read -p "Enter admin full name [Administrator]: " ADMIN_NAME
-    ADMIN_NAME=${ADMIN_NAME:-Administrator}
-    echo "Creating admin user $ADMIN_NAME ($ADMIN_USERNAME)"
-    #adduser ${ADMIN_USERNAME} --gecos "$ADMIN_USERNAME"
-    adduser ${ADMIN_USERNAME} --gecos "$ADMIN_USERNAME" --disabled-password
+if [ -z "$ADMIN_PASSWORD" ]; then
+  read -r -p "Enter admin password: " ADMIN_PASSWORD
+  [ -z "$ADMIN_PASSWORD" ] && ADMIN_PASSWORD=$(openssl rand 32 | base32)
 fi
+ 
+echo "creating $ADMIN_USERNAME ($ADMIN_NAME) with password $ADMIN_PASSWORD"
 
-ADMIN_PASSWORD=$(openssl rand 32 | base32)
-if [ -z ${1+x} ]; then 
-	echo "password for admin user not specified, generating random password"
-else
-	ADMIN_PASSWORD=$1
-fi
-echo "password for admin user: $ADMIN_PASSWORD"
+ssh "$TARGET" "echo ok" && echo "ssh $TARGET failed" && exit 1
 
-echo "${ADMIN_USERNAME}:${ADMIN_PASSWORD}" | chpasswd
-
-usermod -aG sudo ${ADMIN_USERNAME}
-echo "${ADMIN_USERNAME} ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/${ADMIN_USERNAME}
-
-install -o ${ADMIN_USERNAME} -g ${ADMIN_USERNAME} -d /home/${ADMIN_USERNAME}/.ssh
-install -o ${ADMIN_USERNAME} -g ${ADMIN_USERNAME} -t /home/${ADMIN_USERNAME}/.ssh rootstrap/ssh/authorized_keys
-chmod 700 /home/${ADMIN_USERNAME}/.ssh
-chmod 600 /home/${ADMIN_USERNAME}/.ssh/authorized_keys
-
-echo "AllowUsers ${ADMIN_USERNAME}" | tee -a /etc/ssh/sshd_config
-
-rm -rf /root/.ssh
-rm -f /etc/ssh/sshd_config.d/*.conf
-
-sed -i 's/^Include/#Include/g' /etc/ssh/sshd_config
-sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
-sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
-
-systemctl restart sshd
-
-ufw enable 
-ufw allow ssh
-
-cd ; rm -rf rootstrap 
-
-shutdown -r now
+scp "$PAYLOAD" "$TARGET":
+ssh -t "$TARGET" "./$PAYLOAD \"$ADMIN_USERNAME\" \"$ADMIN_NAME\" \"$ADMIN_PASSWORD\""
 
 # EOF
