@@ -18,7 +18,7 @@ apt update -y &> /dev/null
 apt upgrade -y &> /dev/null
 
 echo "Installing essential packages ..."
-apt install -y age at curl git gawk gnupg openssh-server shred ufw unzip rng-tools
+apt install -y age at curl git gawk gnupg keepassxc openssh-server shred ufw unzip rng-tools
 
 echo "Disable sudo password requirement for $USERNAME ..."
 usermod -aG sudo "$USERNAME"
